@@ -1,3 +1,2 @@
 Compatible with Unix-like operating systems\
-Dependencies:\
-__-SFML2 (graphics)
+Depends on SFML2 for graphics, install it using your package manager and run make.
