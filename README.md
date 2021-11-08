@@ -1,3 +1,3 @@
-Compatible with Unix-like operating systems
-Dependencies:
-  -SFML2 (graphics)
+Compatible with Unix-like operating systems\
+Dependencies:\
+__-SFML2 (graphics)
