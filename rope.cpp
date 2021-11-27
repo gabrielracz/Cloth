@@ -142,9 +142,13 @@ public:
     }
 
     void draw(sf::RenderWindow *window){
+        // sf::Color color (0x675cff);
+        sf::Color color (255, 255, 255, 255);
+
         sf::Vertex line[] = {
-            sf::Vertex(sf::Vector2f(mass1->position.x, mass1->position.y)),
-            sf::Vertex(sf::Vector2f(mass2->position.x, mass2->position.y))};
+            sf::Vertex(sf::Vector2f(mass1->position.x, mass1->position.y), color),
+            sf::Vertex(sf::Vector2f(mass2->position.x, mass2->position.y), color)
+        };
         window->draw(line, 2, sf::Lines);
     }
 };
@@ -169,7 +173,7 @@ public:
 
         buildCloth(x, y, masscount, pointMass);
 
-        // buildString(x, y, masscount, springlength, pointMass);
+        //buildString(x, y, masscount, springlength, pointMass);
         
     }
 
@@ -194,7 +198,7 @@ public:
             // std::cout << springlength * mx + startx << " " << my * springlength + starty << '\n';                
             Mass *m = new Mass( springlength * mx + startx, my * springlength + starty, pointMass);
             masses.push_back(m);
-            if(my == 0 && mx % (masscount/3) == 0){
+            if(my == 0 && mx % ((masscount-1)/5) == 0){
                 m->anchored = true;
                 anchors.push_back(m);
             }
@@ -241,20 +245,15 @@ public:
         }
     }
 
-    void update(sf::RenderWindow *window){
-        for (auto &s : springs)
-        {
-            s->solve(dt);
+    void update(sf::RenderWindow *window, bool flipper){
+        for(int i = 0; i < springs.size(); i++){
+            springs.at(i)->solve(dt);
+        }for(int i = 0; i < masses.size(); i++){
+            masses.at(i)->solve(dt);
+        }for(int i = 0; i < springs.size(); i++){
+            springs.at(i)->draw(window);
         }
-        for (auto &m : masses)
-        {
-            m->solve(dt);
-            // m->draw(window);
-        }
-        for (auto &s : springs)
-        {
-            s->draw(window);
-        }
+            
     }
 
     void addMass(float x, float y, float mass){
@@ -281,20 +280,23 @@ public:
 };
 
 int main(int argc, char *argv[]){
-    sf::RenderWindow *window = new sf::RenderWindow(sf::VideoMode(1280, 1280), "Rope");
+    sf::RenderWindow *window = new sf::RenderWindow(sf::VideoMode(1000, 1000), "Rope");
     window->clear(sf::Color(0, 0, 0, 255));
     window->display();
+    window->setKeyRepeatEnabled(false);
+    window->setFramerateLimit(500);
 
     float dt = 0.02f;
     //num, length, weight, x, y, dt, k
-    RopeSim rope(100, 900, 20, 100, 100, dt, 40);
+    RopeSim rope(100, 700, 20, 100, 10, dt, 45);
     
-    // RopeSim rope(100, 600, 10, 480, 100, dt, 130);
+    //RopeSim rope(100, 600, 10, 480, 100, dt, 130);
     //rope.masses.back()->m = 1.5;
 
     bool toggle = false;
+    bool flipper;
     usleep(500000);
-    Mass* grabbed;
+    Mass* grabbed = NULL;
     while (window->isOpen())
     {
         sf::Event e;
@@ -317,8 +319,19 @@ int main(int argc, char *argv[]){
                         grabbed = m;
                     }
                 }
+                if(grabbed)
+                    grabbed->anchored = true;
                 
             }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
+                grabbed->anchored = false;
+                toggle = false;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)){
+                grabbed->anchored = true;
+                toggle = true;
+            }
+
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
             {
                 while(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
@@ -333,7 +346,7 @@ int main(int argc, char *argv[]){
         }
         //usleep(0.0015 * 1000000);
         window->clear(sf::Color(0, 0, 0, 255));
-        rope.update(window);
+        rope.update(window, flipper);
         window->display();
         // getchar();
         // char ch;
@@ -344,3 +357,4 @@ int main(int argc, char *argv[]){
     rope.free();
     return 0;
 }
+
