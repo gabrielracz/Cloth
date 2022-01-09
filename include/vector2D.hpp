@@ -1,5 +1,4 @@
-class Vector2D
-{
+class Vector2D{
 public:
     float x;
     float y;

@@ -1,40 +1,91 @@
+#include"../include/vector2D.hpp"
+#include"../include/mass.hpp"
+#include"../include/spring.hpp"
 #include"../include/ropesim.hpp"
-#include<iostream>
+#include<math.h>
 
-RopeSim::RopeSim(int masscount, int width, float totalmass, float x, float y, float dt, float k){
-    this->dt = dt;
+RopeSim::RopeSim(int masscount, int width, float totalmass, float x, float y, float k){
     this->k = k;
     this->springlength = width / masscount;
-    
-    // float pointMass = totalmass / (masscount * masscount);
-    float pointMass = totalmass / masscount;
+    this->startx = x;
+    this->starty = y;
 
-    buildCloth(x, y, masscount, pointMass);
+    // float pointmass = totalmass / (masscount * masscount);
+    this->pointmass = totalmass / masscount;
+    this->masscount = masscount;
 
-    // buildString(x, y, masscount, springlength, pointMass);
+    buildCloth();
+
+    // buildString(x, y, masscount, springlength, pointmass);
     
 }
 
+RopeSim::~RopeSim(){
+    for (auto &m : masses){
+        delete m;
+    }
+    for (auto &s : springs){
+        delete s;
+    }
+}
+
+void RopeSim::Update(float dt){
+    for(int i = 0; i < springs.size(); i++){
+        Spring* s = springs.at(i);
+        if(s->tear) continue;
+            s->Update(dt);
+    }for(int i = 0; i < masses.size(); i++){
+        masses[i]->grabbed = false;
+        masses[i]->Solve(dt);
+        // masses[i]->Update(dt);
+    }
+        
+}
+
+//m == 1 ---- CUT
+//m == 2 ---- GRAB
+void RopeSim::Update(Vector2D hitbox, int m,  float dt){
+    // std::cout << mousepos.x << " " << mousepos.y << std::endl;
+    for(int i = 0; i < springs.size(); i++){
+        Spring* s = springs.at(i);
+        if(s->tear || s->CheckTear() || (m == 1 && s->CheckCollision(hitbox))) 
+            continue;
+        s->Update(dt);
+    }
+    for(int i = 0; i < masses.size(); i++){
+        masses[i]->Solve(dt);
+    }
+        
+}
+
+std::vector<std::pair<Vector2D, Vector2D>>* RopeSim::Draw(){
+    std::vector<std::pair<Vector2D, Vector2D>>* verts = new std::vector<std::pair<Vector2D, Vector2D>>();
+    for(auto spr : springs){
+        std::pair<Vector2D, Vector2D> l (Vector2D(spr->mass1->position.x, spr->mass1->position.y), Vector2D(spr->mass2->position.x, spr->mass2->position.y));
+        verts->push_back(l);
+    }
+    return verts;
+}
 void RopeSim::getGridPos(int index, int width, int* x, int* y){
     *x = index % width;
     *y = floor(index / width);
 }
 
 //Should create cloth as a inheritance of rope
-void RopeSim::buildCloth(float startx, float starty, int masscount, float pointMass){
+void RopeSim::buildCloth(){
     //Start at top left corner
     //masscount will be a square piece of cloth
     int totalMasses = masscount * masscount;
     int mx, my;
 
-    Mass* anchor = new Mass(startx, starty, pointMass);
+    Mass* anchor = new Mass(startx, starty, pointmass);
     masses.push_back(anchor);
     anchors.push_back(anchor);
     anchor->anchored = true;
 
     for(int i = 1; i < totalMasses; i++){
         getGridPos(i, masscount, &mx, &my);
-        Mass *m = new Mass( springlength * mx + startx, my * springlength + starty, pointMass);
+        Mass *m = new Mass( springlength * mx + startx, my * springlength + starty, pointmass);
         masses.push_back(m);
         if((my == 0) && mx % ((masscount-1)/5) == 0){
             m->anchored = true;
@@ -68,52 +119,20 @@ void RopeSim::buildCloth(float startx, float starty, int masscount, float pointM
     }
 }
 
-void RopeSim::buildString(float x, float y, int masscount, float springlength, float pointMass){
-    Mass* anchor = new Mass(x, y, pointMass);
+void RopeSim::buildString(float x, float y, int masscount, float springlength, float pointmass){
+    Mass* anchor = new Mass(x, y, pointmass);
     masses.push_back(anchor);
     anchors.push_back(anchor);
     anchor->anchored = true;
 
     for (int i = 1; i < masscount; i++)
     {
-        Mass *m = new Mass(springlength * i + x, y, pointMass);
+        Mass *m = new Mass(springlength * i + x, y, pointmass);
         masses.push_back(m);
         Spring *s = new Spring(masses[i - 1], m, k, springlength);
         springs.push_back(s);
     }
 }
-
-void RopeSim::update(){
-    for(int i = 0; i < springs.size(); i++){
-        Spring* s = springs.at(i);
-        if(s->tear) continue;
-            s->solve(dt);
-    }for(int i = 0; i < masses.size(); i++){
-        masses[i]->solve(dt);
-    }
-        
-}
-
-void RopeSim::update(bool cutting, Vector2D mousepos){
-    // std::cout << mousepos.x << " " << mousepos.y << std::endl;
-    for(int i = 0; i < springs.size(); i++){
-        Spring* s = springs.at(i);
-        if(s->tear || s->check_tear() || s->check_collision(mousepos)) continue;
-        s->solve(dt);
-    }for(int i = 0; i < masses.size(); i++){
-        masses[i]->solve(dt);
-    }
-        
-}
-
-void RopeSim::render(sf::RenderWindow *window){
-for(int i = 0; i < springs.size(); i++){
-        Spring* s = springs.at(i);
-        if(s->tear || s->check_tear()) continue;
-        s->draw(window);
-    }
-}
-
 void RopeSim::addMass(float x, float y, float mass){
     Mass *m = new Mass(x, y, mass);
     masses.push_back(m);
@@ -125,13 +144,11 @@ void RopeSim::addSpring(int i1, int i2, float kc){
     springs.push_back(s);
 }
 
-void RopeSim::free(){
-    for (auto &m : masses)
-    {
-        delete m;
-    }
-    for (auto &s : springs)
-    {
-        delete s;
-    }
+void RopeSim::rebuild(){
+    masses.clear();
+    springs.clear();
+    anchors.clear();
+    buildCloth();
 }
+
+

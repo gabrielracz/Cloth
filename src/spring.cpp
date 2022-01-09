@@ -1,3 +1,5 @@
+#include"../include/vector2D.hpp"
+#include"../include/mass.hpp"
 #include"../include/spring.hpp"
 
 
@@ -9,7 +11,9 @@ Spring::Spring(Mass *mass1, Mass *mass2, float springConstant, float springlengt
     this->tear = false;
 }
 
-void Spring::solve(float dt){
+//Solves spring equation and appslies force
+//To the two connected masses
+void Spring::Update(float dt){
     // Fs = -k (x - l)
     // k = springConstant, x = positionDelta, l = springlength
 
@@ -18,33 +22,30 @@ void Spring::solve(float dt){
     Vector2D springForce = (deltaPos / r) * (-(springlength - r)) * (-springConstant);
     Vector2D netForce = springForce + (-((mass1->velocity) - (mass2->velocity))) * 0.4;
 
-    if (!mass1->anchored){
-        mass1->applyForce(netForce, dt);
-        mass1->move(dt);
+    if (!mass1->anchored && !mass1->grabbed){
+        mass1->ApplyForce(netForce, dt);
+        mass1->Update(dt);
     }
-    if (!mass2->anchored){
+    if (!mass2->anchored && !mass1->grabbed){
         Vector2D oppForce = -netForce;
-        mass2->applyForce(oppForce, dt);
-        mass2->move(dt);
+        mass2->ApplyForce(oppForce, dt);
+        mass2->Update(dt);
     }
 }
 
-void Spring::move(){
+void Spring::Update(Vector2D mousepos, int m, float dt){
+
 }
 
-void Spring::draw(sf::RenderWindow *window){
-    // sf::Color color (0xE0D7CAff);
-    sf::Color color (0xFFFFFFFF);
-    //sf::Color color (255, 255, 255, 255);
-
-    sf::Vertex line[] = {
-        sf::Vertex(sf::Vector2f(mass1->position.x, mass1->position.y), color),
-        sf::Vertex(sf::Vector2f(mass2->position.x, mass2->position.y), color)
-    };
-    window->draw(line, 2, sf::Lines);
+std::vector<std::pair<Vector2D, Vector2D>>* Spring::Draw(){
+    std::vector<std::pair<Vector2D, Vector2D>>* v = new std::vector<std::pair<Vector2D, Vector2D>>();
+    v->push_back(std::pair (mass1->position, mass2->position));
+    return v;
 }
 
-bool Spring::check_tear(){
+
+
+bool Spring::CheckTear(){
     if(!(mass1->anchored || mass2->anchored) && mass1->position.getDistance(mass2->position) > springlength * 5){    //change this to be some force requirement
         tear = true;
         return true;
@@ -53,10 +54,7 @@ bool Spring::check_tear(){
     }   
 }
 
-bool Spring::check_collision(Vector2D comp){
-    //find midpoint of spring
-    //compare that with some square hitbox to comp
-
+bool Spring::CheckCollision(Vector2D comp){
     Vector2D midpoint ( (mass1->position.x + mass2->position.x)/2, (mass1->position.y + mass2-> position.y)/2);
     int w = 4;
     if(midpoint.x > comp.x - w && midpoint.x < comp.x + w && midpoint.y > comp.y - w && midpoint.y < comp.y + w){
