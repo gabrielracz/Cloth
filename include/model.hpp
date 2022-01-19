@@ -22,5 +22,6 @@ class Model{
     void Step(Vector2D hitbox, int m, float dt);
     void Draw();
     void RebuildObjects();
+    void ClearObjects();
     std::vector<PhysicsObject*>* GetObjects();
 };

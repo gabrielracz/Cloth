@@ -22,11 +22,11 @@ void Spring::Update(float dt){
     Vector2D springForce = (deltaPos / r) * (-(springlength - r)) * (-springConstant);
     Vector2D netForce = springForce + (-((mass1->velocity) - (mass2->velocity))) * 0.4;
 
-    if (!mass1->anchored && !mass1->grabbed){
+    if (!mass1->anchored){
         mass1->ApplyForce(netForce, dt);
         mass1->Update(dt);
     }
-    if (!mass2->anchored && !mass1->grabbed){
+    if (!mass2->anchored){
         Vector2D oppForce = -netForce;
         mass2->ApplyForce(oppForce, dt);
         mass2->Update(dt);

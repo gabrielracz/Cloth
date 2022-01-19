@@ -67,6 +67,7 @@ void View::PollEvents(){
         }else if(e.type == sf::Event::KeyReleased){
             if(e.key.code == sf::Keyboard::R){
                 ctrl->HandleReload();
+                return;
             } 
         }
 

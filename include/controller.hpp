@@ -5,6 +5,12 @@ class Vector2D;
 class PhysicsObject;
 
 
+typedef enum INTERACTION_MODES {
+    CUT,
+    GRAB,
+    HOLD
+};
+
 class Controller {
 public:
     View* view;
@@ -13,6 +19,7 @@ public:
     float dt;
     bool cutting;
     bool grabbing;
+    bool rope_toggle;
 
     Controller();
 

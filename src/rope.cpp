@@ -34,7 +34,6 @@ void Rope::Update(float dt){
         
         if(s->tear || s->CheckTear()) 
             continue;
-        
         s->Update(dt);
     }
     if(grabbed != nullptr){
@@ -42,7 +41,6 @@ void Rope::Update(float dt){
     }
 
     for(int i = 0; i < masses.size(); i++){
-        // masses[i]->grabbed = false;
         masses[i]->Solve(dt);
         // masses[i]->Update(dt);
     }

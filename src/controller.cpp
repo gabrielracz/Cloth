@@ -19,6 +19,7 @@ Controller::Controller(){
     model->AddObject(rope);
     cutting = false;
     grabbing = false;
+    rope_toggle = true;
 }
 
 void Controller::Update(){
@@ -50,7 +51,18 @@ void Controller::HandleGrabbing(bool t){
 }
 
 void Controller::HandleReload(){
-    // model->rebuild();
+    model->ClearObjects();
+    if(rope_toggle){
+        Rope* rpe = new Rope(100, 600, 10.0f, 480.0f, 100.0f, 130.0f); //ROPE
+        rpe->Build();
+        model->AddObject(rpe);
+
+    }else{
+        Cloth* clt = new Cloth(90, (int)(1000*.8), 20.0f, 1000*.2f, 10.0f, 45.0f);
+        clt->Build();
+        model->AddObject(clt);
+    }
+    rope_toggle = !rope_toggle;
     return;
 }
 

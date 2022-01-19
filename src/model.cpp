@@ -29,6 +29,13 @@ void Model::AddObject(PhysicsObject* obj){
     objects.push_back(obj);
 }
 
+void Model::ClearObjects(){
+    for(auto obj : objects){
+        delete obj;
+    }
+    objects.clear();
+}
+
 void Model::Step(float dt){
     if(cutting){
         for(auto obj : objects){
