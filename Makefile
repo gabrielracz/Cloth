@@ -1,4 +1,4 @@
-objects = build/vector2D.o build/mass.o build/spring.o build/ropesim.o build/model.o build/view.o build/controller.o  build/main.o 
+objects = build/vector2D.o build/mass.o build/spring.o build/rope.o build/cloth.o build/model.o build/view.o build/controller.o  build/main.o 
 all: $(objects) rpe
 CFLAGS= -O3
 
@@ -11,8 +11,11 @@ build/mass.o: src/mass.cpp include/mass.hpp
 build/spring.o: src/spring.cpp include/spring.hpp
 	g++ $(CFLAGS) -c src/spring.cpp -o build/spring.o
 
-build/ropesim.o: src/ropesim.cpp
-	g++ $(CFLAGS) -c src/ropesim.cpp -o build/ropesim.o
+build/rope.o: src/rope.cpp
+	g++ $(CFLAGS) -c src/rope.cpp -o build/rope.o
+
+build/cloth.o: src/cloth.cpp
+	g++ $(CFLAGS) -c src/cloth.cpp -o build/cloth.o
 
 build/model.o: src/model.cpp
 	g++ $(CFLAGS) -c src/model.cpp -o build/model.o
@@ -30,5 +33,4 @@ rpe: ${objects}
 	g++ $(CFLAGS) -o rpe $(objects) -lsfml-graphics -lsfml-window -lsfml-system -lm
 
 clean:
-	rm -f build/*
-	rm -f rpe
+	rm -f rpe build/*

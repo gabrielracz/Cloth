@@ -1,6 +1,8 @@
 #include"../include/vector2D.hpp"
 #include"../include/mass.hpp"
 
+#include<iostream>
+
 Mass::Mass(float x, float y, float mass){
     m = mass;
     position = Vector2D(x, y);
@@ -21,7 +23,7 @@ void Mass::Solve(Vector2D hitbox){
 }
 
 bool Mass::CheckCollision(Vector2D hitbox){
-    int w = 8;
+    int w = 16;
     if(position.x > hitbox.x - w && position.x < hitbox.x + w && position.y > hitbox.y - w && position.y < hitbox.y + w){
         grabbed = true;
         return true;

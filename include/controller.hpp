@@ -2,7 +2,7 @@
 class View;
 class Model;
 class Vector2D;
-class RopeSim;
+class PhysicsObject;
 
 
 class Controller {
@@ -17,7 +17,7 @@ public:
     Controller();
 
     Vector2D GetMousePos();
-    std::vector<RopeSim*>* GetObjects();
+    std::vector<PhysicsObject*>* GetObjects();
     void Update();
 
     void HandleClosed();

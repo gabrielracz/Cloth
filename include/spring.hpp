@@ -1,8 +1,8 @@
-// #include"physicsobject.hpp"
+#include"physicsobject.hpp"
 class Mass;
 class Vector2D;
 
-class Spring{
+class Spring : PhysicsObject{
 public:
     Mass *mass1;
     Mass *mass2;
@@ -11,6 +11,8 @@ public:
     bool tear;
 
     Spring(Mass *mass1, Mass *mass2, float springConstant, float springlength);
+    ~Spring() = default;
+
     bool CheckCollision(Vector2D comp);
     bool CheckTear();
     

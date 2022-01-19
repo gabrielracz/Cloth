@@ -1,7 +1,8 @@
 #include<vector>
+#include"physicsobject.hpp"
 class Vector2D;
 
-class Mass{
+class Mass : PhysicsObject{
 public:
     float m;
     Vector2D position;
@@ -11,6 +12,7 @@ public:
     bool grabbed;
 
     Mass(float x, float y, float mass);
+    ~Mass() = default;
     
     void Solve(float dt);
     void Solve(Vector2D hitbox);

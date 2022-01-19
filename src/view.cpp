@@ -1,8 +1,6 @@
 #include"SFML/Graphics.hpp"
 #include"../include/vector2D.hpp"
-#include"../include/mass.hpp"
-#include"../include/spring.hpp"
-#include"../include/ropesim.hpp"
+#include"../include/physicsobject.hpp"
 #include"../include/controller.hpp"
 #include"../include/view.hpp"
 
@@ -39,17 +37,18 @@ void View::Update(){
 
 void View::Draw(){
     window->clear();
-    std::vector<RopeSim*>* objs = ctrl->GetObjects(); 
+    std::vector<PhysicsObject*>* objs = ctrl->GetObjects(); 
     for(auto obj : *objs){
         sf::Color color (0xFFFFFFFF);
-        for(auto spr : obj->springs){
-            if(spr->tear) continue;
+        std::vector<std::pair<Vector2D, Vector2D>>* verts = obj->Draw();
+        for(auto v : *verts){
             sf::Vertex line[] = {
-                sf::Vertex(sf::Vector2f(spr->mass1->position.x, spr->mass1->position.y), color),
-                sf::Vertex(sf::Vector2f(spr->mass2->position.x, spr->mass2->position.y), color)
+                sf::Vertex(sf::Vector2f(v.first.x, v.first.y), color),
+                sf::Vertex(sf::Vector2f(v.second.x, v.second.y), color)
             };
             window->draw(line, 2, sf::Lines);
         }
+        delete verts;
     }
     window->display();
 }
