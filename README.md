@@ -1,20 +1,20 @@
-BUILD
+BUILD\
 -Install SFML\
 &emsp;(Ubuntu)\
-&emsp;`sudo apt install libsfml-dev`\
+&emsp;`sudo apt install libsfml-dev`
   &emsp;(macOS)\
-  &emsp;`homebrew install sfml`\
+  &emsp;`homebrew install sfml`
   
 -Clone this repo\
-  &emsp;`git clone https://github.com/gabrielracz/Cloth.git`\
+  &emsp;`git clone https://github.com/gabrielracz/Cloth.git`
   
 -In the Cloth directory, compile using Makefile\
-  &emsp;`make`\
+  &emsp;`make`
   
 -Run executable\
-  &emsp;`./rpe`\
+  &emsp;`./rpe`
 
-CONTROLS
+CONTROLS\
 &emsp;Left-click to cut
 &emsp;Right-click to grab anchor-point
 
