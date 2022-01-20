@@ -1,4 +1,4 @@
-BUILD\
+<u>BUILD</u>\
 -Install SFML\
 &emsp;(Ubuntu)\
 &emsp;`sudo apt install libsfml-dev`\
@@ -14,7 +14,7 @@ BUILD\
 -Run executable\
   &emsp;`./rpe`
 
-CONTROLS\
+<u>CONTROLS</u>\
 &emsp;Left-click to cut\
 &emsp;Right-click to grab anchor-point
 
