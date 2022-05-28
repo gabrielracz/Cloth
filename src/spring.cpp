@@ -39,7 +39,7 @@ void Spring::Update(Vector2D mousepos, int m, float dt){
 
 std::vector<std::pair<Vector2D, Vector2D>>* Spring::Draw(){
     std::vector<std::pair<Vector2D, Vector2D>>* v = new std::vector<std::pair<Vector2D, Vector2D>>();
-    v->push_back(std::pair (mass1->position, mass2->position));
+    v->push_back(std::pair<Vector2D, Vector2D> (mass1->position, mass2->position));
     return v;
 }
 
