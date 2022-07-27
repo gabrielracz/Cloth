@@ -3,7 +3,7 @@
 &emsp;(Ubuntu)\
 &emsp;`sudo apt install libsfml-dev`\
 &emsp;(macOS)\
-&emsp;`homebrew install sfml`
+&emsp;`brew install sfml`
   
 -Clone this repo\
   &emsp;`git clone https://github.com/gabrielracz/Cloth.git`
